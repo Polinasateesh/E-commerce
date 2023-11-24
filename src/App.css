@@ -52,20 +52,19 @@ span{
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
   box-shadow: darkgray;
   width: 100%;
-  background-color: rgb(74, 138, 138);
+  background-color: #000;
   position: sticky;
   top: 0;
-  padding: 5px;
  
 }
 
 .logo{
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: 20px;
-  font-weight: bold;
-  color: aliceblue;
+ height: 70px;
+ width: 70px;
 }
 .card-content{
   display: flex;

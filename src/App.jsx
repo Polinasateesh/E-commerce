@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Card, TextField, InputAdornment } from '@mui/material'
 import './App.css'
+import loader from './assets/loader.gif'
+import logo from './assets/e-cart.png'
 import SearchIcon from '@mui/icons-material/Search';
 
 
@@ -32,12 +34,14 @@ const App = () => {
   return (
     <>
       <section className='header'>
-        <h1 className='logo'>E-Commerce</h1>
+        {/* <h1 className='logo'>E-Commerce</h1> */}
+        <img className='logo' src={logo}/>
         <TextField
           id="standard-search"
-          label="Search By Name"
+          // label="Search By Name"
           type="search"
           variant="outlined"
+          style={{backgroundColor:'white',borderRadius:'5px'}}
           size='small'
           value={searchText}
           onChange={handleChange}
@@ -52,7 +56,7 @@ const App = () => {
         />
       </section>
       <section className='container'>
-        {filterData?.map((eachObj) => (
+        {filterData.length===0? <img src={loader} style={{marginTop:'200px',backgroundColor:'blue'}}/>:filterData?.map((eachObj) => (
           <Card key={eachObj.id} className='card'>
             <div className='card-content'>
               <img src={eachObj.image} alt={eachObj.title} />
