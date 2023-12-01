@@ -1,62 +1,88 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Card, TextField, InputAdornment } from '@mui/material'
+import { Card, TextField, Button } from '@mui/material'
 import './App.css'
 import loader from './assets/loader.gif'
 import logo from './assets/e-cart.png'
-import SearchIcon from '@mui/icons-material/Search';
+import { fetchProducts, addProduct, removeProduct } from './Redux/store'
+import { useDispatch, useSelector } from 'react-redux'
+
 
 
 const App = () => {
-  const [data, setData] = useState([])
-  const [searchText, setSearchText] = useState('')
-  const [filterData, setFilterData] = useState([])
+
+  const [product, setProduct] = useState('')
+
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.products.items)
+
   useEffect(() => {
-    fetchingData()
-  }, [])
+    const fetchingProducts = async () => {
+      try {
+        const response = await axios.get('https://fakestoreapi.com/products')
 
-  const fetchingData = async () => {
-    const response = await axios.get('https://fakestoreapi.com/products')
-   
-    setData(response.data)
-    setFilterData(response.data)
-    window.localStorage.setItem('products', JSON.stringify(response.data))
+        dispatch(fetchProducts(response.data))
+
+      } catch (error) {
+
+        console.log('error', error);
+
+      }
+    }
+    fetchingProducts()
+  }, [dispatch])
+
+  const shoppingImages = [
+    'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
+    'https://fakestoreapi.com/img/61mtL65D4cL._AC_SX679_.jpg',
+    'https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg',
+    'https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg',
+  ];
+
+  const handleAddProduct = () => {
+    if (product !== '') {
+      const randomPrice = (Math.random() * 100).toFixed(2);
+      const randomIndex = Math.floor(Math.random() * shoppingImages.length);
+      dispatch(addProduct({ id: Date.now(), title: product, image: shoppingImages[randomIndex], price: randomPrice }))
+      setProduct('')
+     
+    }else{
+
+    }
 
   }
 
-  const handleChange =async (event) => {
-    setSearchText(event.target.value)
-    const filteredItems = data?.filter((each) => (each.title.toLowerCase().includes(event.target.value.toLowerCase())))
-    setFilterData(filteredItems)
+  const handleDelete = (id) => {
+    dispatch(removeProduct(id))
   }
+
 
 
   return (
     <>
       <section className='header'>
-        {/* <h1 className='logo'>E-Commerce</h1> */}
-        <img className='logo' src={logo}/>
-        <TextField
-          id="standard-search"
-          // label="Search By Name"
-          type="search"
-          variant="outlined"
-          style={{backgroundColor:'white',borderRadius:'5px'}}
-          size='small'
-          value={searchText}
-          onChange={handleChange}
-          sx={{ marginRight: '20px' }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <img className='logo' src={logo} />
+        <div>
+          <TextField
+            id="standard-search"
+            placeholder='Add Product'
+            type="text"
+            variant="outlined"
+            style={{ backgroundColor: 'white', borderRadius: '5px' }}
+            size='small'
+            value={product}
+            onChange={(event) => setProduct(event.target.value)}
+            sx={{ marginRight: '20px' }}
+
+          />
+          <Button variant='contained' style={{ marginRight: '10px' }} onClick={handleAddProduct}>+Add</Button>
+
+        </div>
+
       </section>
+
       <section className='container'>
-        {filterData.length===0? <img src={loader} style={{marginTop:'200px',backgroundColor:'blue'}}/>:filterData?.map((eachObj) => (
+        {data.length === 0 ? <img src={loader} style={{ marginTop: '200px', backgroundColor: 'blue' }} /> : data?.map((eachObj) => (
           <Card key={eachObj.id} className='card'>
             <div className='card-content'>
               <img src={eachObj.image} alt={eachObj.title} />
@@ -65,8 +91,7 @@ const App = () => {
               <p><a href='#'>Know more</a></p>
             </div>
             <div className='button-container'>
-              <button>Add to Cart</button>
-              <button>Add to Wishlist</button>
+              <button onClick={() => handleDelete(eachObj.id)} >Delete</button>
             </div>
           </Card>
         ))}

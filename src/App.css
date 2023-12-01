@@ -41,11 +41,12 @@ span{
 .button-container{
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 8px;
 
 }
+
 
 .header{
   display: flex;
